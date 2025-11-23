@@ -78,7 +78,7 @@ int main(){
 
     while(1){
         //dot button
-        if(dotButton == 1 && !dotPressed){
+        if(dotButton == 1 && !dotPressed){  //debounce
             dotPressed = true;
             gapTriggered = false;
             wait(0.02f);
@@ -152,12 +152,11 @@ int main(){
             
 
         }
+        //word gap
         if(gapTimer.read() > WORD_GAP && gapTriggered){
             lcdBuffer[lcdIndex++] = ' ';
-            
-            
-
             memset(tempWord, 0, sizeof(tempWord));
+            
             tempIndex = 0;
             inputOccured = false;
             gapTriggered = false;
