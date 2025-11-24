@@ -2,16 +2,15 @@
 # **STM32 Morse Code Translator**
 <div align="center">
 
-
-![GitHub top language](https://img.shields.io/github/languages/top/mhnriz/morse-code-translator-stm32?style=for-the-badge&color=34D399)
-![GitHub last commit](https://img.shields.io/github/last-commit/mhnriz/morse-code-translator-stm32?style=for-the-badge&color=6EE7B7)
-![GitHub repo size](https://img.shields.io/github/repo-size/mhnriz/morse-code-translator-stm32?style=for-the-badge&color=34D399)
-<br>
-
-![Platform](https://img.shields.io/badge/platform-STM32-10B981?style=for-the-badge)
-![Hardware](https://img.shields.io/badge/Hardware-STM32%20Nucleo-10B981?style=for-the-badge)
+![Last Commit](https://img.shields.io/github/last-commit/mhnriz/morse-code-translator-stm32?style=for-the-badge&color=3498DB)
+![Repo Size](https://img.shields.io/github/repo-size/mhnriz/morse-code-translator-stm32?style=for-the-badge&color=2ECC71)
+<br />
+![Platform](https://img.shields.io/badge/Platform-STM32%20Nucleo-3498DB?style=for-the-badge)
+![Language](https://img.shields.io/badge/Language-C++-9B59B6?style=for-the-badge)
+![Framework](https://img.shields.io/badge/Framework-Mbed%20OS-3498DB?style=for-the-badge)
 
 </div>
+
 
 ## 📖 **Overview**
 
