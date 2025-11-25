@@ -6,10 +6,15 @@
 TextLCD MyLCD(PA_0, PA_1, PA_4, PB_0, PC_1, PC_0);
 DigitalIn dotButton(PC_6);
 DigitalIn dashButton(PC_8);
+DigitalOut buzzer(PA_7);
 Timer gapTimer;
+Timer dashTimer;
 
 #define LETTER_GAP 0.5
 #define WORD_GAP 1.5
+
+char lcdBuffer[33];
+int lcdIndex = 0;
 
 //morse code configuration
 char morseInput[10], tempWord[32];
@@ -58,6 +63,39 @@ void move_range(char *array, int srcStart, int srcEnd, int dstStart) {
     for(int i = srcStart; i <= srcEnd-1; i++) array[i] = ' ';
 }
 
+void buttonInput(int butNum, bool &gapTriggered, bool &inputOccured, int &arrIndex){
+    if(dashButton == 1){
+        dashTimer.reset();
+        while(dashButton == 1);
+        if(dashTimer.read() < 0.1){
+            gapTimer.reset();
+            dashTimer.reset();
+            return;
+        }
+    }
+    if(arrIndex < 9){
+        morseInput[arrIndex++] = butNum == 0 ? '.' : '-';
+        morseInput[arrIndex] = '\0';
+    }
+    inputOccured = true;
+    gapTimer.reset();
+}
+
+void lcdClear(char *lcdBuffer, int &lcdIndex, int tempIndex){
+    if(lcdIndex > 32) {
+        move_range(lcdBuffer, lcdIndex-tempIndex, lcdIndex-1, 0);
+        lcdIndex = tempIndex;
+        for(int i = 32; i > tempIndex; i--) lcdBuffer[i] = ' ';
+        MyLCD.cls();
+        
+        for(int i = 0; i < 16; i++)
+            MyLCD.putc((i < lcdIndex) ? lcdBuffer[i] : ' ');
+        for(int i = 16; i < 32; i++)
+            MyLCD.putc((i < lcdIndex) ? lcdBuffer[i] : ' ');
+        
+    }
+}
+
 
 int main(){
     dotButton.mode(PullDown);
@@ -65,9 +103,10 @@ int main(){
     bootScreen();
     gapTimer.reset();
     gapTimer.start();
+    dashTimer.reset();
+    dashTimer.start();
 
-    char lcdBuffer[32];
-    int lcdIndex = 0;
+    
     bool dotPressed = false;
     bool dashPressed = false;
     bool inputOccured = false;
@@ -84,47 +123,23 @@ int main(){
             wait(0.02f);
 
             if(dotButton == 1){
-                if(morseIndex < 9){
-                    morseInput[morseIndex++] = '.';
-                    morseInput[morseIndex] = '\0';
-                }
-
-                inputOccured = true;
-                gapTimer.reset();
+                buttonInput(0, gapTriggered, inputOccured, morseIndex);
             }
         }
         if(dotButton == 0) dotPressed = false;
-
+        
+        (dotButton == 1 || dashButton == 1) ? buzzer = 1 : buzzer = 0;
+        
         //dash button
         if(dashButton == 1 && !dashPressed){
             dashPressed = true;
             gapTriggered = false;
             wait(0.02f);
-
             if(dashButton == 1){
-                if(morseIndex < 9){
-                    morseInput[morseIndex++] = '-';
-                    morseInput[morseIndex] = '\0';
-                }
-
-                inputOccured = true;
-                gapTimer.reset();
+                buttonInput(1, gapTriggered, inputOccured, morseIndex);
             }
         }
         if(dashButton == 0) dashPressed = false;
-
-        if(lcdIndex > 32) {
-                move_range(lcdBuffer, lcdIndex-tempIndex, lcdIndex-1, 0);
-                lcdIndex = 0 + tempIndex;
-                for(int i = 32; i > tempIndex; i--) lcdBuffer[i] = ' ';
-                MyLCD.cls();
-                
-                for(int i = 0; i < 16; i++)
-                    MyLCD.putc((i < lcdIndex) ? lcdBuffer[i] : ' ');
-                for(int i = 16; i < 32; i++)
-                    MyLCD.putc((i < lcdIndex) ? lcdBuffer[i] : ' ');
-            }
-
         //letter gap
         if(inputOccured && gapTimer.read() > LETTER_GAP){
             
@@ -149,8 +164,6 @@ int main(){
             
             inputOccured = false;
             gapTriggered = true;
-            
-
         }
         //word gap
         if(gapTimer.read() > WORD_GAP && gapTriggered){
@@ -163,5 +176,6 @@ int main(){
             gapTimer.reset();
 
         }
+        lcdClear(lcdBuffer, lcdIndex, tempIndex);
     }
 }
