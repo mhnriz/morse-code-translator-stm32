@@ -48,11 +48,10 @@ morse-code-translator-stm32/
 | STM32 Nucleo | e.g., Nucleo-F401RE |
 | 16×2 LCD | HD44780-compatible |
 | Push Buttons | Dot & Dash input |
-| LEDs | Input indicators* |
+| LEDs | Input indicators |
 | Jumper Wires | For connections |
 | Breadboard | Optional |
 
-*LEDs powered in series with button
 
 ---
 
