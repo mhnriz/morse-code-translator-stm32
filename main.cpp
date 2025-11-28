@@ -31,7 +31,7 @@ const morseSymbol morseTable[] = {
     {"-.--", 'Y'}, {"--..", 'Z'},
 
     {"-----", '0'}, {".----", '1'}, {"..---", '2'}, {"...--", '3'}, {"....-", '4'}, {".....", '5'}, {"-....", '6'}, 
-    {"--...", '7'}, {"---..", '8'}, {"----.", '9'}
+    {"--...", '7'}, {"---..", '8'}, {"----.", '9'}, {"......", '<'}
 };
 const int MORSE_COUNT = sizeof(morseTable)/sizeof(morseSymbol);
 
@@ -143,11 +143,23 @@ int main(){
         //letter gap
         if(inputOccured && gapTimer.read() > LETTER_GAP){
             
-            
             char decoded = decodeMorse(morseInput);
-            tempWord[tempIndex++] = decoded;
-            lcdBuffer[lcdIndex++] = decoded;
-
+            //backspace
+            if(decoded == '<'){
+                if (lcdIndex > 0) {
+                    lcdIndex--;
+                    lcdBuffer[lcdIndex] = ' ';
+                }
+                if (tempIndex > 0) {
+                    tempIndex--;
+                    tempWord[tempIndex] = '\0';
+                }
+            }
+            else{
+                tempWord[tempIndex++] = decoded;
+                lcdBuffer[lcdIndex++] = decoded;
+            }
+            
             if(lcdIndex-tempIndex < 16 && lcdIndex-1 >= 16){
                 move_range(lcdBuffer, lcdIndex-tempIndex, lcdIndex-1, 16);
                 lcdIndex = 16 + tempIndex;
